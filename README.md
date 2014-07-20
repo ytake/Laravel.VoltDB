@@ -1,6 +1,7 @@
 Laravel.VoltDB
 ==============
 VoltDB providers for Laravel  
+[![Latest Stable Version](https://poser.pugx.org/ytake/laravel-voltdb/v/stable.svg)](https://packagist.org/packages/ytake/laravel-voltdb) [![Total Downloads](https://poser.pugx.org/ytake/laravel-voltdb/downloads.svg)](https://packagist.org/packages/ytake/laravel-voltdb) [![Latest Unstable Version](https://poser.pugx.org/ytake/laravel-voltdb/v/unstable.svg)](https://packagist.org/packages/ytake/laravel-voltdb) [![License](https://poser.pugx.org/ytake/laravel-voltdb/license.svg)](https://packagist.org/packages/ytake/laravel-voltdb)  
 
 ##future plan
 .schema builder (stored procedure, .java class)
