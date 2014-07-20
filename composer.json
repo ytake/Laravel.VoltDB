@@ -1,0 +1,30 @@
+{
+    "name": "ytake/laravel-voltdb",
+    "description": "laravel,auth,voltdb,newsql",
+    "authors": [
+        {
+            "name": "Yuuki Takezawa",
+            "email": "yuuki.takezawa@comnect.jp.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "ext-voltdb": "*",
+        "ext-curl": "*",
+        "ytake/voltdb-client-wrapper": "0.*",
+        "illuminate/support": "4.2.*",
+        "illuminate/config": "4.2.*",
+        "illuminate/auth": "4.2.*",
+        "illuminate/database": "4.2.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*",
+        "mockery/mockery": "0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ytake\\LaravelVoltDB\\": "src/VoltDB"
+        }
+    },
+    "minimum-stability": "stable"
+}
