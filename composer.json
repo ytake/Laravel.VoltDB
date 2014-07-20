@@ -1,6 +1,8 @@
 {
     "name": "ytake/laravel-voltdb",
-    "description": "laravel,auth,voltdb,newsql",
+    "description": "VoltDB providers for Laravel",
+    "keywords": ["laravel","auth","voltdb","newsql"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Yuuki Takezawa",
