@@ -5,7 +5,7 @@ VoltDB providers for Laravel
 ##future plan
 .schema builder (stored procedure, .java class)
 
-#install
+#Install
 **required [ext-voltdb](https://github.com/VoltDB/voltdb-client-php), ext-curl**  
 Add the package to your composer.json and run composer update.
 ```json
@@ -31,7 +31,7 @@ The service provider will register a voltdb database extension
 **not supported Eloquent, QueryBuilder  
 (VoltDB supports PHP client application development using VoltDB PHP client library.)**  
 
-#configure
+#Configure
 Add database connection
 ```php
 'voltdb' => [
@@ -46,7 +46,7 @@ config publish
 ```bash
 $ php artisan config:publish ytake/laravel-voltdb
 ```
-#database extension
+#Database Extension
 ##@AdHoc query
 ```php
 $sql = "INSERT INTO users (user_id, username, password, remember_token, created_at)"
@@ -87,5 +87,20 @@ supported for json interface API
 \VoltDBApi::request()->info()->getResult();
 
 // basic
-
+\VoltDBApi::request()->post([
+    'Procedure' => 'addUser',
+    'Parameters' => [1, "voltdb"]
+])->getResult();
 ```
+###Async Stored Procedure
+see [VoltDB.PHPClientWrapper](https://github.com/ytake/VoltDB.PHPClientWrapper)
+
+#Console
+**ytake:voltdb-auth-publish**     publish DDL for auth driver  
+**ytake:voltdb-info**             information about ytake/laravel-voltdb  
+**ytake:voltdb-system-catalog**   renderer system catalog  
+##voltdb-system-catalog
+**Options:**  
+ --component (-c)      returns information about the schema of the VoltDB database, depending upon the component keyword you specify.
+![alt text](http://ytake.github.io/images/voltdb-system-catalog.png)
+(all)
