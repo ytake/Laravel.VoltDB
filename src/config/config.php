@@ -39,6 +39,19 @@ return [
         'system' => [
             // for system catalog, see database.php
             'database' => 'voltdb',
-        ]
+        ],
+        // cache 'voltdb' driver configure
+        'cache' => [
+            // use cache database connection name, see database.php
+            'database' => 'voltdb',
+            /** default auth procedure */
+            'procedure' => [
+                'flushAll' => "Cache_flushAll",
+                'forget' => "Cache_forget",
+                'update' => "Cache_update",
+                'add' => "Cache_add",
+                'find' => "Cache_find",
+            ],
+        ],
     ],
 ];

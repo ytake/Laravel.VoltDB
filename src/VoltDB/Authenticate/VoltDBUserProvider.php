@@ -53,15 +53,6 @@ class VoltDBUserProvider implements UserProviderInterface
         $this->config = $config;
         $this->hasher = $hasher;
         $this->table = $config['auth.table'];
-        // stored procedure name
-        $this->findUserProcedure = $config->get(
-            'laravel-voltdb::default.auth.procedure.findUser', $this->findUserProcedure);
-        //
-        $this->rememberTokenProcedure = $config->get(
-            'laravel-voltdb::default.auth.procedure.remember_token', $this->rememberTokenProcedure);
-        //
-        $this->updateTokenProcedure = $config->get(
-            'laravel-voltdb::default.auth.procedure.update_token', $this->updateTokenProcedure);
     }
 
     /**
@@ -73,7 +64,10 @@ class VoltDBUserProvider implements UserProviderInterface
      */
     public function retrieveById($identifier)
     {
-        $user = $this->connection->procedure($this->findUserProcedure, [$identifier]);
+        // stored procedure name
+        $findUserProcedure = $this->config->get(
+            'laravel-voltdb::default.auth.procedure.findUser', $this->findUserProcedure);
+        $user = $this->connection->procedure($findUserProcedure, [$identifier]);
 		if (!is_null($user)) {
             return new VoltDBUser((array) $user, $this->config);
         }
@@ -88,9 +82,10 @@ class VoltDBUserProvider implements UserProviderInterface
      */
     public function retrieveByToken($identifier, $token)
     {
-        $user = $this->connection->procedure(
-            $this->rememberTokenProcedure, [$identifier, $token]
-        );
+        //
+        $rememberTokenProcedure = $this->config->get(
+            'laravel-voltdb::default.auth.procedure.remember_token', $this->rememberTokenProcedure);
+        $user = $this->connection->procedure($rememberTokenProcedure, [$identifier, $token]);
 
         if(!is_null($user)) {
             return new VoltDBUser((array) $user, $this->config);
@@ -106,7 +101,10 @@ class VoltDBUserProvider implements UserProviderInterface
      */
     public function updateRememberToken(UserInterface $user, $token)
     {
-        $this->connection->procedure($this->updateTokenProcedure, [$token, $user->getAuthIdentifier()]);
+        //
+        $updateTokenProcedure = $this->config->get(
+            'laravel-voltdb::default.auth.procedure.update_token', $this->updateTokenProcedure);
+        $this->connection->procedure($updateTokenProcedure, [$token, $user->getAuthIdentifier()]);
     }
 
     /**
@@ -148,16 +146,17 @@ class VoltDBUserProvider implements UserProviderInterface
     {
         $query = [];
         $columns = $this->connection->procedure("@SystemCatalog", ["COLUMNS"]);
-
-        foreach($columns as $row) {
-            // not supported prepared statement
-            foreach ($credentials as $key => $value) {
-                if (!str_contains($key, 'password')) {
-                    if($row['TABLE_NAME'] == strtoupper($this->table)
-                        && $row['COLUMN_NAME']  == strtoupper($key))
-                    {
-                        $value = $this->connection->convertType($row['TYPE_NAME'], $value);
-                        $query[] = "{$key} = " . $value;
+        if(count($columns)) {
+            foreach ($columns as $row) {
+                // not supported prepared statement
+                foreach ($credentials as $key => $value) {
+                    if (!str_contains($key, 'password')) {
+                        if ($row['TABLE_NAME'] == strtoupper($this->table)
+                            && $row['COLUMN_NAME'] == strtoupper($key)
+                        ) {
+                            $value = $this->connection->convertType($row['TYPE_NAME'], $value);
+                            $query[] = "{$key} = " . $value;
+                        }
                     }
                 }
             }

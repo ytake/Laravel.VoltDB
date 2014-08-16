@@ -6,7 +6,7 @@ use Ytake\VoltDB\Parse;
 use Illuminate\Config\FileLoader;
 use Illuminate\Filesystem\Filesystem;
 
-class HttpClientTest extends \App\Tests\TestCase
+class HttpClientTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Ytake\LaravelVoltDB\HttpClient */
     protected $client;
