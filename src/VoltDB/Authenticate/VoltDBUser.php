@@ -19,9 +19,6 @@ class VoltDBUser implements UserInterface
      */
     protected $attributes;
 
-    /** @var \Illuminate\Config\Repository  */
-    protected $config;
-
     /** @var string  */
     protected $id;
 
@@ -37,7 +34,6 @@ class VoltDBUser implements UserInterface
     public function __construct(array $attributes, Repository $config)
     {
         $this->attributes = $attributes;
-        $this->config = $config;
         $this->id = $config->get('laravel-voltdb::default.auth.column_name.id', 'id');
         $this->password = $config->get('laravel-voltdb::default.auth.column_name.password', 'password');
         $this->token = $config->get('laravel-voltdb::default.auth.column_name.remember_token', 'remember_token');

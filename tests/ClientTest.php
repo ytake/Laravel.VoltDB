@@ -1,9 +1,9 @@
 <?php
 
-use Ytake\VoltDB\Parse;
+use Mockery as m;
 use Ytake\LaravelVoltDB\Client;
 
-class ClientTest extends \App\Tests\TestCase
+class ClientTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Ytake\LaravelVoltDB\Client */
     protected $client;
@@ -18,7 +18,10 @@ class ClientTest extends \App\Tests\TestCase
             'password'  => '',
             'port' => 21212
         ];
-        $this->client = new Client(new \Ytake\VoltDB\Client(new \VoltClient, new Parse), $config);
+        $clientMock = m::mock("Ytake\VoltDB\Client");
+        $clientMock->shouldReceive('connect')->once()->andReturn($clientMock);
+        $clientMock->shouldReceive('procedure')->once()->andReturn([]);
+        $this->client = new Client($clientMock, $config);
     }
 
     public function testClientInstance()
@@ -39,5 +42,23 @@ class ClientTest extends \App\Tests\TestCase
     {
         $response = $this->client->procedure("@SystemCatalog", ["COLUMNS"]);
         $this->assertInternalType('array', $response);
+    }
+
+    /**
+     * @expectedException \Ytake\VoltDB\Exception\ConnectionErrorException
+     */
+    public function testNotConnection()
+    {
+        $config = [
+            'driver'    => 'voltdb',
+            'host'      => 'localhost',
+            'username'  => '',
+            'password'  => '',
+            'port' => 8888
+        ];
+        $clientMock = m::mock("Ytake\VoltDB\Client");
+        $clientMock->shouldReceive('connect')->once()->andThrowExceptions([
+                new \Ytake\VoltDB\Exception\ConnectionErrorException]);
+        $this->client = new Client($clientMock, $config);
     }
 } 

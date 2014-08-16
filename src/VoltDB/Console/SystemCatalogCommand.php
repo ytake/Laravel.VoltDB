@@ -1,8 +1,8 @@
 <?php
 namespace Ytake\LaravelVoltDB\Console;
 
-use Ytake\LaravelVoltDB\Client;
 use Illuminate\Console\Command;
+use Illuminate\Database\DatabaseManager;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -29,8 +29,11 @@ class SystemCatalogCommand extends Command
      */
     protected $description = "render system catalog";
 
-    /** @var Client */
-    protected $client;
+    /** @var DatabaseManager */
+    protected $manager;
+
+    /** @var string  */
+    protected $database;
 
     /** @var array  */
     protected $tableHeader = [
@@ -100,12 +103,14 @@ class SystemCatalogCommand extends Command
     ];
 
     /**
-     * @param Client $client
+     * @param DatabaseManager $manager
+     * @param string $database connect Database
      */
-    public function __construct(Client $client)
+    public function __construct(DatabaseManager $manager, $database = 'voltdb')
     {
         parent::__construct();
-        $this->client = $client;
+        $this->manager = $manager;
+        $this->database = $database;
     }
 
     /**
@@ -171,7 +176,8 @@ class SystemCatalogCommand extends Command
     private function getTableRenderer($component, $header)
     {
         $result = [];
-        $systemCatalog = $this->client->procedure("@SystemCatalog", [$component]);
+        $systemCatalog = $this->manager->connection($this->database)
+            ->procedure("@SystemCatalog", [$component]);
         if($systemCatalog) {
             $i = 0;
             foreach($systemCatalog as $row) {

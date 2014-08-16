@@ -2,6 +2,7 @@
 namespace Ytake\LaravelVoltDB;
 
 use VoltClient;
+use Ytake\LaravelVoltDB\Cache\VoltDBStore;
 use Ytake\VoltDB\Parse;
 use Ytake\LaravelVoltDB\Client;
 use Ytake\LaravelVoltDB\HttpClient;
@@ -31,7 +32,7 @@ class VoltDBServiceProvider extends ServiceProvider
     protected $defer = false;
 
     /**
-     * Bootstrap the application events.
+     * Bootstrap the applicat0ion events.
      * @return void
      */
     public function boot()
@@ -39,6 +40,8 @@ class VoltDBServiceProvider extends ServiceProvider
         $this->package('ytake/laravel-voltdb');
         // register auth 'voltdb' driver
         $this->registerAuthenticate();
+        // register cache 'voltdb' driver
+        $this->registerCacheDriver();
         // register commands
         $this->registerCommands();
     }
@@ -80,8 +83,9 @@ class VoltDBServiceProvider extends ServiceProvider
         return [
             'voltdb-api',
             'auth',
+            'cache',
             'command.voltdb.info',
-            'command.voltdb.auth.publish',
+            'command.voltdb.schema.publish',
             'command.voltdb.system.catalog'
         ];
     }
@@ -105,7 +109,27 @@ class VoltDBServiceProvider extends ServiceProvider
     }
 
     /**
-     *
+     * register 'voltdb' cache driver
+     * @return void
+     */
+    protected function registerCacheDriver()
+    {
+        $this->app['cache']->extend('voltdb', function($app) {
+            // for cache
+            $default = $app['config']->get('laravel-voltdb::default.cache.database', $this->default);
+            return new \Illuminate\Cache\Repository(
+                new VoltDBStore(
+                    $app['db']->connection($default),
+                    $app['encrypter'],
+                    $app['config'],
+                    $default
+                )
+            );
+        });
+    }
+    /**
+     * register artisan command
+     * @return void
      */
     protected function registerCommands()
     {
@@ -115,19 +139,17 @@ class VoltDBServiceProvider extends ServiceProvider
         });
         $this->commands('command.voltdb.info');
         //
-        $this->app['command.voltdb.auth.publish'] = $this->app->share(function($app) {
-            return new \Ytake\LaravelVoltDB\Console\AuthSchemaPublishCommand;
+        $this->app['command.voltdb.schema.publish'] = $this->app->share(function($app) {
+            return new \Ytake\LaravelVoltDB\Console\SchemaPublishCommand;
         });
-        $this->commands('command.voltdb.auth.publish');
+        $this->commands('command.voltdb.schema.publish');
         //
         $this->app['command.voltdb.system.catalog'] = $this->app->share(function($app) {
             // for system catalog database
             $default = $app['config']->get('laravel-voltdb::default.system.database', $this->default);
-
-            return new \Ytake\LaravelVoltDB\Console\SystemCatalogCommand(
-                $app['db']->connection($default)
-            );
+            return new \Ytake\LaravelVoltDB\Console\SystemCatalogCommand($app['db'], $default);
         });
         $this->commands('command.voltdb.system.catalog');
     }
+
 }
