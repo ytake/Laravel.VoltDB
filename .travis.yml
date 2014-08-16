@@ -16,8 +16,8 @@ before_script:
   - ./configure --with-voltdb=../voltdb-client-cpp
   - make
   - echo "extension=voltdb.so" > voltdb.ini && phpenv config-add voltdb.ini
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev
+  - composer self-update
+  - composer install
 
 script: phpunit
 
