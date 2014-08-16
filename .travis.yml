@@ -7,8 +7,8 @@ php:
 
 before_script:
   - sudo apt-get update -qq
-  - sudo apt-get -qq install libboost
-  - sudo apt-get -qq install gcc
+  - sudo apt-get install gcc
+  - sudo apt-get install libboost-all-dev
   - git clone -b noexceptions https://github.com/VoltDB/voltdb-client-cpp.git
   - cd voltdb-client-cpp
   - make
