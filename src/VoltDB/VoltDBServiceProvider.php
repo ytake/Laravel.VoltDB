@@ -85,7 +85,7 @@ class VoltDBServiceProvider extends ServiceProvider
             'auth',
             'cache',
             'command.voltdb.info',
-            'command.voltdb.auth.publish',
+            'command.voltdb.schema.publish',
             'command.voltdb.system.catalog'
         ];
     }
@@ -139,10 +139,10 @@ class VoltDBServiceProvider extends ServiceProvider
         });
         $this->commands('command.voltdb.info');
         //
-        $this->app['command.voltdb.auth.publish'] = $this->app->share(function($app) {
+        $this->app['command.voltdb.schema.publish'] = $this->app->share(function($app) {
             return new \Ytake\LaravelVoltDB\Console\SchemaPublishCommand;
         });
-        $this->commands('command.voltdb.auth.publish');
+        $this->commands('command.voltdb.schema.publish');
         //
         $this->app['command.voltdb.system.catalog'] = $this->app->share(function($app) {
             // for system catalog database
