@@ -1,4 +1,5 @@
 /vendor
+/build/logs
 composer.phar
 composer.lock
 .DS_Store
