@@ -1,7 +1,14 @@
 {
     "name": "ytake/laravel-voltdb",
     "description": "VoltDB providers for Laravel",
-    "keywords": ["laravel","auth","voltdb","newsql"],
+    "keywords": [
+        "laravel",
+        "auth",
+        "cache",
+        "voltdb",
+        "database",
+        "newsql"
+    ],
     "license": "MIT",
     "authors": [
         {
