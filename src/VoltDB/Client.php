@@ -40,10 +40,12 @@ class Client extends Connection
      * @param  string  $query
      * @param  $bindings not supported
      * @return mixed
+     *
+     * @deprecated
      */
     public function selectOne($query, $bindings = null)
     {
-        return $this->voltConnection->selectOne($query);
+        return $this->voltConnection->executeOne($query);
     }
 
     /**
@@ -51,10 +53,12 @@ class Client extends Connection
      * @param string $query
      * @param null $bindings
      * @return array|void
+     *
+     * @deprecated
      */
     public function select($query, $bindings = null)
     {
-        return $this->voltConnection->select($query);
+        return $this->voltConnection->execute($query);
     }
 
     /**
