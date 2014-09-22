@@ -1,7 +1,14 @@
 Laravel.VoltDB
 ==============
 VoltDB providers for Laravel  
-[![Latest Stable Version](https://poser.pugx.org/ytake/laravel-voltdb/v/stable.svg)](https://packagist.org/packages/ytake/laravel-voltdb) [![Total Downloads](https://poser.pugx.org/ytake/laravel-voltdb/downloads.svg)](https://packagist.org/packages/ytake/laravel-voltdb) [![Latest Unstable Version](https://poser.pugx.org/ytake/laravel-voltdb/v/unstable.svg)](https://packagist.org/packages/ytake/laravel-voltdb) [![License](https://poser.pugx.org/ytake/laravel-voltdb/license.svg)](https://packagist.org/packages/ytake/laravel-voltdb)  
+[![License](http://img.shields.io/packagist/l/ytake/laravel-voltdb.svg?style=flat)](https://packagist.org/packages/ytake/laravel-voltdb)
+[![Latest Version](http://img.shields.io/packagist/v/ytake/laravel-voltdb.svg?style=flat)](https://packagist.org/packages/ytake/laravel-voltdb)
+[![Total Downloads](http://img.shields.io/packagist/dt/ytake/laravel-voltdb.svg?style=flat)](https://packagist.org/packages/ytake/laravel-voltdb)
+[![Dependency Status](https://www.versioneye.com/user/projects/53ef586c13bb06509e0002d4/badge.svg?style=flat)](https://www.versioneye.com/user/projects/53ef586c13bb06509e0002d4)
+
+[![Scrutinizer Code Quality](http://img.shields.io/scrutinizer/g/ytake/Laravel.VoltDB.svg?style=flat)](https://scrutinizer-ci.com/g/ytake/VoltDB.PHPClientWrapper/?branch=master)
+[![Code Coverage](http://img.shields.io/scrutinizer/coverage/g/ytake/Laravel.VoltDB/master.svg?style=flat)](https://scrutinizer-ci.com/g/ytake/VoltDB.PHPClientWrapper/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ytake/VoltDB.PHPClientWrapper/build-status/master)
 
 ##future plan
 .schema builder (stored procedure, .java class)
@@ -68,61 +75,24 @@ in `app/config/auth.php`:
 ```php
  'driver' => 'voltdb',
 ```
-use stored procedure(default)  
-###Auth_findUser  
-```sql
-CREATE PROCEDURE Auth_findUser AS
-  SELECT * FROM users WHERE user_id = ?;
-PARTITION PROCEDURE Auth_findUser ON TABLE users COLUMN user_id;
-```
-###Auth_rememberToken  
-```sql
-CREATE PROCEDURE Auth_rememberToken AS
-  SELECT * FROM users WHERE user_id = ? AND remember_token = ?;
-PARTITION PROCEDURE Auth_rememberToken ON TABLE users COLUMN user_id;
-```
-###Auth_updateToken  
-```sql
-CREATE PROCEDURE Auth_updateToken AS
-  UPDATE users SET remember_token = ? WHERE user_id = ?;
-PARTITION PROCEDURE Auth_updateToken ON TABLE users COLUMN user_id PARAMETER 1;
-```
+
 #Cache
 include voltdb cache driver  
 in `app/config/cache.php`:
 ```php
  'driver' => 'voltdb',
 ```
-use stored procedure(default)  
-###Cache_flushAll  
-```sql
-CREATE PROCEDURE Cache_flushAll AS DELETE FROM cache;
-```
-###Cache_forget
-```sql
-CREATE PROCEDURE Cache_forget AS
-  DELETE FROM cache WHERE key = ?;
-PARTITION PROCEDURE Cache_forget ON TABLE cache COLUMN key;
-```
-###Cache_find
-```sql
-CREATE PROCEDURE Cache_find AS
-  SELECT * FROM cache WHERE key = ?;
-PARTITION PROCEDURE Cache_find ON TABLE cache COLUMN key;
-```
-###Cache_add
-```sql
-CREATE PROCEDURE Cache_add AS
-  INSERT INTO cache (key, value, expiration) VALUES (?, ?, ?);
-```
-###Cache_update
-```sql
-CREATE PROCEDURE Cache_update AS
-  UPDATE cache SET value = ?, expiration = ? WHERE key = ?;
-PARTITION PROCEDURE Cache_update ON TABLE cache COLUMN key PARAMETER 2;
+
+#Session
+include voltdb session driver  
+in `app/config/session.php`:
+```php
+ 'driver' => 'voltdb',
 ```
 
-#publish for auth, cache ddl.sql  
+**Auth, Cache, Session use Stored Procedure(see schema/ddl.sql)**
+
+#publish for auth, cache, session ddl.sql  
 ```bash
 $ php artisan ytake:voltdb-schema-publish
 ```
@@ -142,13 +112,20 @@ CREATE TABLE users (
    PRIMARY KEY(user_id)
 );
 CREATE INDEX UsersIndex ON users (username, password, remember_token);
-CREATE TABLE cache (
+CREATE TABLE caches (
   key VARCHAR(255) UNIQUE NOT NULL,
   value VARCHAR(262144),
   expiration INTEGER DEFAULT 0 NOT NULL,
   CONSTRAINT PK_cache PRIMARY KEY (key)
 );
 CREATE INDEX IX_cache_expires ON cache (expiration);
+CREATE TABLE sessions (
+  id VARCHAR(255) UNIQUE NOT NULL,
+  payload VARCHAR(65535),
+  last_activity INTEGER DEFAULT 0 NOT NULL
+);
+CREATE INDEX IX_session_id ON sessions (id);
+CREATE INDEX IX_activity ON sessions (last_activity);
 ```
 
 
