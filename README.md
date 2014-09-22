@@ -6,9 +6,9 @@ VoltDB providers for Laravel
 [![Total Downloads](http://img.shields.io/packagist/dt/ytake/laravel-voltdb.svg?style=flat)](https://packagist.org/packages/ytake/laravel-voltdb)
 [![Dependency Status](https://www.versioneye.com/user/projects/53ef586c13bb06509e0002d4/badge.svg?style=flat)](https://www.versioneye.com/user/projects/53ef586c13bb06509e0002d4)
 
-[![Scrutinizer Code Quality](http://img.shields.io/scrutinizer/g/ytake/Laravel.VoltDB.svg?style=flat)](https://scrutinizer-ci.com/g/ytake/VoltDB.PHPClientWrapper/?branch=master)
-[![Code Coverage](http://img.shields.io/scrutinizer/coverage/g/ytake/Laravel.VoltDB/master.svg?style=flat)](https://scrutinizer-ci.com/g/ytake/VoltDB.PHPClientWrapper/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ytake/VoltDB.PHPClientWrapper/build-status/master)
+[![Scrutinizer Code Quality](http://img.shields.io/scrutinizer/g/ytake/Laravel.VoltDB.svg?style=flat)](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/?branch=master)
+[![Code Coverage](http://img.shields.io/scrutinizer/coverage/g/ytake/Laravel.VoltDB/master.svg?style=flat)](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/build-status/master)
 
 ##future plan
 .schema builder (stored procedure, .java class)
