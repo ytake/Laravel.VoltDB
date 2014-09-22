@@ -2,17 +2,17 @@
 namespace Ytake\LaravelVoltDB;
 
 use Ytake\VoltDB\SystemProcedure;
-use Ytake\VoltDB\Client as BaseClient;
 use Illuminate\Database\Connection;
+use Ytake\VoltDB\Client as BaseClient;
 use Illuminate\Support\Facades\Event AS IlluminateEvent;
 
 /**
- * Class Client
+ * Class ClientConnection
  * @package Ytake\LaravelVoltDB
  * @author  yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  * @license http://opensource.org/licenses/MIT MIT
  */
-class Client extends Connection
+class ClientConnection extends Connection
 {
 
     /** @var BaseClient */
@@ -68,7 +68,7 @@ class Client extends Connection
      * @return array
      * @throws \Ytake\VoltDB\Exception\ResponseErrorException
      */
-    public function exec($query)
+    public function execute($query)
     {
         $voltDB = $this->voltConnection->getClient();
         $response = $voltDB->invoke(SystemProcedure::AD_HOC, [$query]);

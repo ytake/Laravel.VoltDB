@@ -6,6 +6,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 return [
+
     // json interface api configure
     /** voltdb server */
     'host' => "localhost",
@@ -20,7 +21,7 @@ return [
     'default' => [
         // auth 'voltdb' driver configure
         'auth' => [
-            // use auth database connection name
+            // use auth database connection name, see database.php
             'database' => 'voltdb',
 
             'column_name' => [
@@ -33,6 +34,23 @@ return [
                 'findUser' => "Auth_findUser",
                 'remember_token' => "Auth_rememberToken",
                 'update_token' => "Auth_updateToken",
+            ],
+        ],
+        'system' => [
+            // for system catalog, see database.php
+            'database' => 'voltdb',
+        ],
+        // cache 'voltdb' driver configure
+        'cache' => [
+            // use cache database connection name, see database.php
+            'database' => 'voltdb',
+            /** default auth procedure */
+            'procedure' => [
+                'flushAll' => "Cache_flushAll",
+                'forget' => "Cache_forget",
+                'update' => "Cache_update",
+                'add' => "Cache_add",
+                'find' => "Cache_find",
             ],
         ],
     ],

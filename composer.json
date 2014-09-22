@@ -5,6 +5,7 @@
         "laravel",
         "auth",
         "cache",
+        "session",
         "voltdb",
         "database",
         "newsql"
@@ -18,7 +19,6 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "ext-voltdb": "*",
         "ext-curl": "*",
         "ytake/voltdb-client-wrapper": "0.*",
         "illuminate/support": "4.2.*",
@@ -28,12 +28,19 @@
         "illuminate/hashing": "4.2.*",
         "illuminate/filesystem": "4.2.*",
         "illuminate/cache": "4.2.*",
-        "illuminate/console": "4.2.*"
+        "illuminate/console": "4.2.*",
+        "illuminate/session": "4.2.*",
+        "illuminate/events": "4.2.*"
     },
     "require-dev": {
+        "symfony/framework-bundle": "2.*",
+        "symfony/console": "2.*",
         "phpunit/phpunit": "4.*",
         "mockery/mockery": "0.*",
         "satooshi/php-coveralls": "dev-master"
+    },
+    "suggest": {
+        "ext-voltdb": "for AuthDriver, SessionDriver, CacheDriver. use extension https://github.com/VoltDB/voltdb-client-php/tree/native"
     },
     "autoload": {
         "psr-4": {
