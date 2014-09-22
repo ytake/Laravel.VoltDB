@@ -11,13 +11,18 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
     /** @var \Ytake\LaravelVoltDB\HttpClient */
     protected $client;
 
+    public function tearDown()
+    {
+        m::close();
+    }
+
     public function setUp()
     {
         parent::setUp();
-        $filePath = realpath(null);
+        $filePath = PATH;
         $fileLoad = new FileLoader(new Filesystem(), $filePath);
-        $repo = new Repository($fileLoad, 'test');
-        $repo->package('laravel-voltdb', realpath(null), 'laravel-voltdb');
+        $repo = new Repository($fileLoad, 'config');
+        $repo->package('laravel-voltdb', PATH, 'laravel-voltdb');
         $this->client = new \Ytake\LaravelVoltDB\HttpClient($repo, new Parse());
     }
 

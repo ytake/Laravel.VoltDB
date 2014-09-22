@@ -1,12 +1,11 @@
 <?php
 namespace Ytake\LaravelVoltDB\Authenticate;
 
-use Ytake\LaravelVoltDB\Client;
 use Illuminate\Config\Repository;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Hashing\HasherInterface;
+use Ytake\LaravelVoltDB\ClientConnection;
 use Illuminate\Auth\UserProviderInterface;
-use Ytake\LaravelVoltDB\Authenticate\VoltDBUser;
 
 /**
  * Class VoltDBUserProvider
@@ -26,7 +25,7 @@ class VoltDBUserProvider implements UserProviderInterface
     /** @var string default procedure */
     protected $updateTokenProcedure = "Auth_updateToken";
 
-    /** @var Client */
+    /** @var ClientConnection */
     protected $connection;
 
     /** @var \Illuminate\Hashing\HasherInterface  The hasher implementation.  */
@@ -43,11 +42,11 @@ class VoltDBUserProvider implements UserProviderInterface
 
 
     /**
-     * @param Client $connection
+     * @param ClientConnection $connection
      * @param HasherInterface $hasher
      * @param Repository $config
      */
-    public function __construct(Client $connection, HasherInterface $hasher, Repository $config)
+    public function __construct(ClientConnection $connection, HasherInterface $hasher, Repository $config)
     {
         $this->connection = $connection;
         $this->config = $config;

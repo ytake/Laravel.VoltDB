@@ -1,13 +1,17 @@
 <?php
 
 use Mockery as m;
-use Ytake\LaravelVoltDB\Client;
+use Ytake\LaravelVoltDB\ClientConnection;
 
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientConnectionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Ytake\LaravelVoltDB\Client */
+    /** @var \Ytake\LaravelVoltDB\ClientConnection */
     protected $client;
 
+    public function tearDown()
+    {
+        m::close();
+    }
     public function setUp()
     {
         parent::setUp();
@@ -18,15 +22,16 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             'password'  => '',
             'port' => 21212
         ];
-        $clientMock = m::mock("Ytake\VoltDB\Client");
-        $clientMock->shouldReceive('connect')->once()->andReturn($clientMock);
-        $clientMock->shouldReceive('procedure')->once()->andReturn([]);
-        $this->client = new Client($clientMock, $config);
+        $this->client = new ClientConnection(
+            new \Ytake\VoltDB\Client(
+                new \VoltClient,
+                new \Ytake\VoltDB\Parse
+            ), $config);
     }
 
     public function testClientInstance()
     {
-        $this->assertInstanceOf('Ytake\LaravelVoltDB\Client', $this->client);
+        $this->assertInstanceOf('Ytake\LaravelVoltDB\ClientConnection', $this->client);
     }
 
     public function testVoltClient()
@@ -44,6 +49,23 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $response);
     }
 
+    public function testSelect()
+    {
+        $this->assertInternalType('array', $this->client->execute("DELETE FROM users"));
+        $this->assertNull($this->client->selectOne("SELECT * FROM users"));
+        $this->assertNull($this->client->select("SELECT * FROM users"));
+    }
+
+    public function testConvert()
+    {
+        $int = $this->client->convertType("SMALLINT", 1);
+        $this->assertSame(1, $int);
+        $this->assertInternalType('integer', $int);
+        $string = $this->client->convertType("VARCHAR", "testing");
+        $this->assertSame("'testing'", $string);
+        $this->assertInternalType("string", $string);
+    }
+
     /**
      * @expectedException \Ytake\VoltDB\Exception\ConnectionErrorException
      */
@@ -59,6 +81,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $clientMock = m::mock("Ytake\VoltDB\Client");
         $clientMock->shouldReceive('connect')->once()->andThrowExceptions([
                 new \Ytake\VoltDB\Exception\ConnectionErrorException]);
-        $this->client = new Client($clientMock, $config);
+        $this->client = new ClientConnection($clientMock, $config);
     }
 } 

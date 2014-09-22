@@ -11,6 +11,8 @@ class VoltDBStoreTest extends \PHPUnit_Framework_TestCase
     protected $cache;
 
     protected $clientMock;
+    /** @var \Illuminate\Encryption\Encrypter */
+    protected $encrypt;
     public function tearDown()
     {
         m::close();
@@ -20,16 +22,16 @@ class VoltDBStoreTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $filePath = realpath(null);
+        $filePath = PATH;
         $fileLoad = new FileLoader(new Filesystem(), $filePath);
-        $repo = new Repository($fileLoad, 'test');
-        $repo->package('laravel-voltdb', realpath(null), 'laravel-voltdb');
-        $encrypt = new \Illuminate\Encryption\Encrypter('testing');
+        $repo = new Repository($fileLoad, 'config');
+        $repo->package('laravel-voltdb', PATH, 'laravel-voltdb');
+        $this->encrypt = new \Illuminate\Encryption\Encrypter('testing');
 
-        $this->clientMock = m::mock("Ytake\LaravelVoltDB\Client");
+        $this->clientMock = m::mock("Ytake\LaravelVoltDB\ClientConnection");
         $this->cache = new \Ytake\LaravelVoltDB\Cache\VoltDBStore(
             $this->clientMock,
-            $encrypt,
+            $this->encrypt,
             $repo
         );
     }
@@ -69,5 +71,26 @@ class VoltDBStoreTest extends \PHPUnit_Framework_TestCase
     public function testDecrement()
     {
         $this->cache->decrement('testing', 1);
+    }
+
+    public function testCachePut()
+    {
+        $this->clientMock->shouldReceive('procedure')->andReturnNull();
+        $this->cache->put('key', 'testing', 120);
+        $this->assertNull($this->cache->forever('key', 'testing'));
+    }
+
+    public function testCacheGet()
+    {
+        $this->clientMock->shouldReceive('procedure')->andReturn(
+            [
+                [
+                    'value' => $this->encrypt->encrypt('testing'),
+                    'expiration' => time() + (7 * 24 * 60 * 60)
+                ]
+            ]
+        );
+        $this->assertSame('testing', $this->cache->get('key'));
+
     }
 } 

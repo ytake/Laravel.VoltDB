@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap/autoload.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -11,13 +11,18 @@
          syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="Package Test Suite">
+        <testsuite name="Application Test Suite">
             <directory suffix="Test.php">./tests/</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory>./tests</directory>
+            <directory>./src/VoltDB</directory>
+            <exclude>
+                <file>./src/VoltDB/VoltDBServiceProvider.php</file>
+                <file>./src/VoltDB/VoltDBFacade.php</file>
+                <file>./src/VoltDB/Console/SystemCatalogCommand.php</file>
+            </exclude>
         </whitelist>
     </filter>
     <logging>

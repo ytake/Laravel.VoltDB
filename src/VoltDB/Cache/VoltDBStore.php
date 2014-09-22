@@ -1,10 +1,10 @@
 <?php
 namespace Ytake\LaravelVoltDB\Cache;
 
-use Ytake\LaravelVoltDB\Client;
 use Illuminate\Config\Repository;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Cache\StoreInterface;
+use Ytake\LaravelVoltDB\ClientConnection;
 
 /**
  * Class VoltDBStore
@@ -43,12 +43,15 @@ class VoltDBStore implements StoreInterface
     protected $cacheFlushProcedure = "Cache_flushAll";
 
     /**
-     * @param Client $connection
+     * @param ClientConnection $connection
      * @param Encrypter $encrypter
      * @param Repository $config
      */
-    public function __construct(Client $connection, Encrypter $encrypter, Repository $config)
-    {
+    public function __construct(
+        ClientConnection $connection,
+        Encrypter $encrypter,
+        Repository $config
+    ) {
         $this->config = $config;
         $this->connection = $connection;
         $this->encrypter = $encrypter;
@@ -67,10 +70,10 @@ class VoltDBStore implements StoreInterface
         $prefixed = $this->prefix.$key;
         // stored procedure name
         $cacheFindProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.find', $this->cacheFindProcedure);
+            'laravel-voltdb::default.cache.procedure.find', $this->cacheFindProcedure
+        );
         // cache get
         $cache = $this->connection->procedure($cacheFindProcedure, [$prefixed]);
-
         if(!is_null($cache)) {
             if(is_array($cache)) {
                 $cache = (object) array_change_key_case($cache[0]);
@@ -94,7 +97,6 @@ class VoltDBStore implements StoreInterface
     public function put($key, $value, $minutes)
     {
         /**
-         * @todo
          * not supported "VARBINARY" php client
          */
         $key = $this->prefix.$key;

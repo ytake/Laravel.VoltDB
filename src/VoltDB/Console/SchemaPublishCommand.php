@@ -2,6 +2,7 @@
 namespace Ytake\LaravelVoltDB\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -25,6 +26,14 @@ class SchemaPublishCommand extends Command
      */
     protected $description = "publish DDL for Laravel.VoltDB package";
 
+    /**
+     * @param Filesystem $file
+     */
+    public function __construct(Filesystem $file)
+    {
+        parent::__construct();
+        $this->file = $file;
+    }
 
     /**
      * Get the console command options.
@@ -43,19 +52,18 @@ class SchemaPublishCommand extends Command
      */
     public function fire()
     {
-
         $path = (is_null($this->option('publish'))) ? storage_path() . "/schema" : $this->option('publish');
         // clear all cache
         if(is_null($this->option('publish'))) {
-            if(!\File::exists($path)) {
-                \File::makeDirectory($path, 0777);
+            if(!$this->file->exists($path)) {
+                $this->file->makeDirectory($path, 0777);
             }
         }
-        \File::copy(__DIR__ . '/../schema/ddl.sql', $path . "/ddl.sql");
+        $this->file->copy(__DIR__ . '/../schema/ddl.sql', $path . "/ddl.sql");
 
         $this->line("<info>published to {$path}/ddl.sql</info>");
         $this->line('<comment>merge your ddl and start voltdb</comment>');
         $this->line("<comment>example). $ voltdb compile {$path}/ddl.sql</comment>");
-        $this->line("<comment>example). $ voltdb voltdb create catalog.jar</comment>");
+        $this->line("<comment>example). $ voltdb create catalog.jar</comment>");
     }
 }
