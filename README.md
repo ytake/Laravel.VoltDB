@@ -10,8 +10,8 @@ VoltDB providers for Laravel
 [![Code Coverage](http://img.shields.io/scrutinizer/coverage/g/ytake/Laravel.VoltDB/master.svg?style=flat)](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/build-status/master)
 
-##future plan
-.schema builder (stored procedure, .java class)
+##for laravel5
+**for Laravel4  [Laravel.VoltDB](https://github.com/ytake/Laravel.VoltDB/tree/4.2)**
 
 #Install
 **required [ext-voltdb](https://github.com/VoltDB/voltdb-client-php), ext-curl**  
@@ -19,7 +19,7 @@ Add the package to your composer.json and run composer update.
 ```json
 "require": {
     "php": ">=5.4.0",
-    "ytake/laravel-voltdb": "0.*"
+    "ytake/laravel-voltdb": "1.*@dev"
 },
 ```
 
@@ -50,9 +50,9 @@ Add database connection
     'port' => 21212
 ],
 ```
-config publish
+publish
 ```bash
-$ php artisan config:publish ytake/laravel-voltdb
+$ php artisan vendor:publish 
 ```
 #Database Extension
 ##@AdHoc query
@@ -71,16 +71,20 @@ Recommended stored procedure
 ```
 #Auth
 include voltdb auth driver  
-in `app/config/auth.php`:
+in `config/auth.php`:
 ```php
  'driver' => 'voltdb',
 ```
+or .env
 
 #Cache
 include voltdb cache driver  
-in `app/config/cache.php`:
+in `config/cache.php`:
 ```php
- 'driver' => 'voltdb',
+'driver' => 'voltdb',
+'voltdb' => [
+  'driver' => 'voltdb',
+],
 ```
 
 #Session
@@ -98,7 +102,7 @@ $ php artisan ytake:voltdb-schema-publish
 ```
 **Options:**  
  --publish (-p)        Publish to a specific directory  
-default app/storage/schema/ddl.sql
+default storage/schema/ddl.sql
 
 ###DDL
 default ddl
