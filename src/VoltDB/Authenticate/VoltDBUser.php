@@ -1,8 +1,8 @@
 <?php
 namespace Ytake\LaravelVoltDB\Authenticate;
 
-use Illuminate\Auth\UserInterface;
-use Illuminate\Config\Repository;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticateUserContract;
 
 /**
  * Class VoltDBUser
@@ -10,7 +10,7 @@ use Illuminate\Config\Repository;
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  * @license http://opensource.org/licenses/MIT MIT
  */
-class VoltDBUser implements UserInterface
+class VoltDBUser implements AuthenticateUserContract
 {
 
     /**
@@ -30,13 +30,15 @@ class VoltDBUser implements UserInterface
 
     /**
      * @param array $attributes
+     * @param ConfigContract $config
      */
-    public function __construct(array $attributes, Repository $config)
+    public function __construct(array $attributes, ConfigContract $config)
     {
         $this->attributes = $attributes;
-        $this->id = $config->get('laravel-voltdb::default.auth.column_name.id', 'id');
-        $this->password = $config->get('laravel-voltdb::default.auth.column_name.password', 'password');
-        $this->token = $config->get('laravel-voltdb::default.auth.column_name.remember_token', 'remember_token');
+        $this->id = $config->get('ytake-laravel-voltdb.default.auth.column_name.id', 'id');
+        $this->password = $config->get('ytake-laravel-voltdb.default.auth.column_name.password', 'password');
+        $this->token = $config->get('ytake-laravel-voltdb.default.auth.column_name.remember_token', 'remember_token');
+
     }
 
     /**

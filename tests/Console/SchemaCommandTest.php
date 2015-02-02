@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Filesystem\Filesystem;
 
-class SchemaCommandTest extends \PHPUnit_Framework_TestCase
+class SchemaCommandTest extends TestCase
 {
     /** @var \Ytake\LaravelVoltDB\Console\SchemaPublishCommand  */
     protected $command;
@@ -14,6 +14,7 @@ class SchemaCommandTest extends \PHPUnit_Framework_TestCase
         $this->command = new \Ytake\LaravelVoltDB\Console\SchemaPublishCommand(
             $this->file
         );
+        $this->command->setLaravel(new MockApplication());
     }
 
     public function testInstance()

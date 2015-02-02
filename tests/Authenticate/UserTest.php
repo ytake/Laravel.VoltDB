@@ -1,11 +1,8 @@
 <?php
 
 use Mockery as m;
-use Illuminate\Config\Repository;
-use Illuminate\Config\FileLoader;
-use Illuminate\Filesystem\Filesystem;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends TestCase
 {
     protected $array = [
         'USER_ID' => 1,
@@ -23,14 +20,10 @@ class UserTest extends \PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $filePath = PATH;
-        $fileLoad = new FileLoader(new Filesystem(), $filePath);
-        $repo = new Repository($fileLoad, 'config');
-        $repo->package('laravel-voltdb', PATH, 'laravel-voltdb');
-        $this->user = new \Ytake\LaravelVoltDB\Authenticate\VoltDBUser($this->array, $repo);
+        $this->user = new \Ytake\LaravelVoltDB\Authenticate\VoltDBUser($this->array, $this->config);
     }
 
     public function testInstance()

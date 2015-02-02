@@ -3,7 +3,7 @@
 use Mockery as m;
 use Ytake\LaravelVoltDB\ClientConnection;
 
-class ClientConnectionTest extends \PHPUnit_Framework_TestCase
+class ClientConnectionTest extends TestCase
 {
     /** @var \Ytake\LaravelVoltDB\ClientConnection */
     protected $client;
@@ -12,7 +12,7 @@ class ClientConnectionTest extends \PHPUnit_Framework_TestCase
     {
         m::close();
     }
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         $config = [
@@ -26,7 +26,10 @@ class ClientConnectionTest extends \PHPUnit_Framework_TestCase
             new \Ytake\VoltDB\Client(
                 new \VoltClient,
                 new \Ytake\VoltDB\Parse
-            ), $config);
+            ),
+            $config,
+            new \Illuminate\Events\Dispatcher()
+        );
     }
 
     public function testClientInstance()
@@ -81,6 +84,6 @@ class ClientConnectionTest extends \PHPUnit_Framework_TestCase
         $clientMock = m::mock("Ytake\VoltDB\Client");
         $clientMock->shouldReceive('connect')->once()->andThrowExceptions([
                 new \Ytake\VoltDB\Exception\ConnectionErrorException]);
-        $this->client = new ClientConnection($clientMock, $config);
+        $this->client = new ClientConnection($clientMock, $config, new \Illuminate\Events\Dispatcher());
     }
 } 

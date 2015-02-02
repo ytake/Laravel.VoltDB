@@ -80,7 +80,9 @@ class VoltDBServiceProvider extends ServiceProvider
                 'voltdb',
                 function ($app) {
                     // for session
-                    $default = $app['config']->get('ytake-laravel-voltdb.default.session.database', $this->default);
+                    $default = $app['config']->get(
+                        'ytake-laravel-voltdb.default.session.database', $this->default
+                    );
                     return new VoltDBSessionHandler(
                         $app['db']->connection($default),
                         $app['config']

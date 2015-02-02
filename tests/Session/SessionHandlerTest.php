@@ -6,12 +6,12 @@ use Illuminate\Config\FileLoader;
 use Illuminate\Filesystem\Filesystem;
 use Ytake\LaravelVoltDB\ClientConnection;
 
-class SessionHandlerTest extends \PHPUnit_Framework_TestCase
+class SessionHandlerTest extends TestCase
 {
     /** @var  \Ytake\LaravelVoltDB\Session\VoltDBSessionHandler */
     protected $session;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         $config = [
@@ -21,19 +21,17 @@ class SessionHandlerTest extends \PHPUnit_Framework_TestCase
             'password'  => '',
             'port' => 21212
         ];
-        $filePath = PATH;
-        $fileLoad = new FileLoader(new Filesystem(), $filePath);
-        $repo = new Repository($fileLoad, 'config');
-        $repo['auth.table'] = 'users';
-        $repo->package('laravel-voltdb', PATH, 'laravel-voltdb');
 
         $client = new ClientConnection(
             new \Ytake\VoltDB\Client(
                 new \VoltClient,
                 new \Ytake\VoltDB\Parse
-            ), $config);
+            ),
+            $config,
+            new \Illuminate\Events\Dispatcher()
+        );
         $this->session = new \Ytake\LaravelVoltDB\Session\VoltDBSessionHandler(
-            $client, $repo
+            $client, $this->config
         );
     }
 
