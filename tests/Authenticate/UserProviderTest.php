@@ -1,15 +1,14 @@
 <?php
 
 use Mockery as m;
-use Illuminate\Config\Repository;
-use Illuminate\Config\FileLoader;
-use Illuminate\Filesystem\Filesystem;
 use Ytake\LaravelVoltDB\ClientConnection;
 
-class UserProviderTest extends \PHPUnit_Framework_TestCase
+class UserProviderTest extends TestCase
 {
     /** @var \Ytake\LaravelVoltDB\Authenticate\VoltDBUserProvider  */
     protected $provider;
+    /** @var \Ytake\LaravelVoltDB\ClientConnection  */
+    protected $client;
     /** @var array  */
     protected $array = [
         'USER_ID' => 1,
@@ -27,25 +26,24 @@ class UserProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        $filePath = PATH;
-        $fileLoad = new FileLoader(new Filesystem(), $filePath);
-        $repo = new Repository($fileLoad, 'config');
-        $repo['auth.table'] = 'users';
-        $repo->package('laravel-voltdb', PATH, 'laravel-voltdb');
         $config = [
-            'driver'    => 'voltdb',
-            'host'      => 'localhost',
-            'username'  => '',
-            'password'  => '',
+            'driver' => 'voltdb',
+            'host' => 'localhost',
+            'username' => '',
+            'password' => '',
             'port' => 21212
         ];
         $this->client = new ClientConnection(
             new \Ytake\VoltDB\Client(
                 new \VoltClient,
                 new \Ytake\VoltDB\Parse
-            ), $config);
+            ),
+            $config,
+            new \Illuminate\Events\Dispatcher()
+        );
+        $this->config->set('auth.table', 'USERS');
         $this->provider = new \Ytake\LaravelVoltDB\Authenticate\VoltDBUserProvider(
-            $this->client, new \Illuminate\Hashing\BcryptHasher, $repo
+            $this->client, new \Illuminate\Hashing\BcryptHasher, $this->config
         );
     }
 

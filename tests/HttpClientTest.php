@@ -6,7 +6,7 @@ use Ytake\VoltDB\Parse;
 use Illuminate\Config\FileLoader;
 use Illuminate\Filesystem\Filesystem;
 
-class HttpClientTest extends \PHPUnit_Framework_TestCase
+class HttpClientTest extends TestCase
 {
     /** @var \Ytake\LaravelVoltDB\HttpClient */
     protected $client;
@@ -19,11 +19,7 @@ class HttpClientTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        $filePath = PATH;
-        $fileLoad = new FileLoader(new Filesystem(), $filePath);
-        $repo = new Repository($fileLoad, 'config');
-        $repo->package('laravel-voltdb', PATH, 'laravel-voltdb');
-        $this->client = new \Ytake\LaravelVoltDB\HttpClient($repo, new Parse());
+        $this->client = new \Ytake\LaravelVoltDB\HttpClient($this->config, new Parse());
     }
 
     public function testHttpClientInstance()

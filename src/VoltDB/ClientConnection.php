@@ -4,7 +4,7 @@ namespace Ytake\LaravelVoltDB;
 use Ytake\VoltDB\SystemProcedure;
 use Illuminate\Database\Connection;
 use Ytake\VoltDB\Client as BaseClient;
-use Illuminate\Support\Facades\Event AS IlluminateEvent;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 
 /**
  * Class ClientConnection
@@ -21,18 +21,24 @@ class ClientConnection extends Connection
     /** @var array */
     protected $config;
 
+    /** @var DispatcherContract  */
+    protected $dispatcher;
+
     /** @var \Ytake\VoltDB\Client */
     protected $voltConnection;
 
     /**
      * @param BaseClient $client
      * @param array $config
+     * @param DispatcherContract $dispatcher
+     * @throws \Ytake\VoltDB\Exception\ConnectionErrorException
      */
-    public function __construct(BaseClient $client, array $config)
+    public function __construct(BaseClient $client, array $config, DispatcherContract $dispatcher)
     {
         $this->client = $client;
         $this->config = $config;
         $this->voltConnection = $this->client->connect($config);
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -135,79 +141,87 @@ class ClientConnection extends Connection
      * not supported functions
      */
 
+    /**
+     * @param string $table
+     * @return void
+     */
     public function table($table)
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
+    /**
+     * @param mixed $value
+     * @return void
+     */
     public function raw($value)
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function insert($query, $bindings = array())
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function update($query, $bindings = array())
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function delete($query, $bindings = array())
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
 
     public function statement($query, $bindings = array())
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function affectingStatement($query, $bindings = array())
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function unprepared($query)
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function prepareBindings(array $bindings)
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function transaction(\Closure $callback)
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function beginTransaction()
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function commit()
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function rollBack()
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function transactionLevel()
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 
     public function pretend(\Closure $callback)
     {
-        IlluminateEvent::fire('voltdb.not_supported', [__FUNCTION__]);
+        $this->dispatcher->fire('voltdb.not_supported', [__FUNCTION__]);
     }
 }

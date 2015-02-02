@@ -1,9 +1,9 @@
 <?php
 namespace Ytake\LaravelVoltDB\Session;
 
-use Illuminate\Config\Repository;
 use Ytake\LaravelVoltDB\ClientConnection;
 use Illuminate\Session\ExistenceAwareInterface;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
 
 /**
  * Class VoltDBSessionHandler
@@ -40,9 +40,9 @@ class VoltDBSessionHandler implements \SessionHandlerInterface, ExistenceAwareIn
 
     /**
      * @param ClientConnection $connection
-     * @param Repository $config
+     * @param ConfigContract $config
      */
-    public function __construct(ClientConnection $connection, Repository $config)
+    public function __construct(ClientConnection $connection, ConfigContract $config)
     {
         $this->config = $config;
         $this->connection = $connection;
@@ -73,7 +73,7 @@ class VoltDBSessionHandler implements \SessionHandlerInterface, ExistenceAwareIn
     {
         // stored procedure name
         $procedure = $this->config->get(
-            'laravel-voltdb::default.session.procedure.find', $this->sessionFindProcedure
+            'ytake-laravel-voltdb.default.session.procedure.find', $this->sessionFindProcedure
         );
         $session = $this->connection->procedure($procedure, [$sessionId]);
         if(!is_null($session)) {
@@ -96,7 +96,7 @@ class VoltDBSessionHandler implements \SessionHandlerInterface, ExistenceAwareIn
         if ($this->exists) {
             // stored procedure name
             $updateProcedure = $this->config->get(
-                'laravel-voltdb::default.session.procedure.update', $this->sessionUpdateProcedure
+                'ytake-laravel-voltdb.default.session.procedure.update', $this->sessionUpdateProcedure
             );
             $this->connection->procedure($updateProcedure, [
                     base64_encode($data),
@@ -107,7 +107,7 @@ class VoltDBSessionHandler implements \SessionHandlerInterface, ExistenceAwareIn
         } else {
             // stored procedure name
             $addProcedure = $this->config->get(
-                'laravel-voltdb::default.session.procedure.add', $this->sessionAddProcedure
+                'ytake-laravel-voltdb.default.session.procedure.add', $this->sessionAddProcedure
             );
             $this->connection->procedure($addProcedure, [
                     $sessionId,
@@ -125,7 +125,7 @@ class VoltDBSessionHandler implements \SessionHandlerInterface, ExistenceAwareIn
     {
         // stored procedure name
         $procedure = $this->config->get(
-            'laravel-voltdb::default.session.procedure.forget', $this->sessionForgetProcedure
+            'ytake-laravel-voltdb.default.session.procedure.forget', $this->sessionForgetProcedure
         );
         $this->connection->procedure($procedure, [$sessionId]);
     }
@@ -137,7 +137,7 @@ class VoltDBSessionHandler implements \SessionHandlerInterface, ExistenceAwareIn
     {
         // stored procedure name
         $procedure = $this->config->get(
-            'laravel-voltdb::default.session.procedure.deleteActivity', $this->sessionDeleteActivityProcedure
+            'ytake-laravel-voltdb.default.session.procedure.deleteActivity', $this->sessionDeleteActivityProcedure
         );
         $this->connection->procedure($procedure, [time() - $lifetime]);
     }
@@ -153,4 +153,4 @@ class VoltDBSessionHandler implements \SessionHandlerInterface, ExistenceAwareIn
         $this->exists = $value;
         return $this;
     }
-} 
+}

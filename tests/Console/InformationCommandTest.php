@@ -1,6 +1,6 @@
 <?php
 
-class InformationCommandTest extends \PHPUnit_Framework_TestCase
+class InformationCommandTest extends TestCase
 {
     /** @var \Ytake\LaravelVoltDB\Console\InformationCommand  */
     protected $command;
@@ -8,6 +8,7 @@ class InformationCommandTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->command = new \Ytake\LaravelVoltDB\Console\InformationCommand;
+        $this->command->setLaravel(new MockApplication());
     }
 
     public function testInstance()

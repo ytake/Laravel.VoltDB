@@ -1,10 +1,10 @@
 <?php
 namespace Ytake\LaravelVoltDB\Cache;
 
-use Illuminate\Config\Repository;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Cache\StoreInterface;
 use Ytake\LaravelVoltDB\ClientConnection;
+use Illuminate\Contracts\Cache\Store as CacheContract;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
+use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 
 /**
  * Class VoltDBStore
@@ -12,10 +12,10 @@ use Ytake\LaravelVoltDB\ClientConnection;
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  * @license http://opensource.org/licenses/MIT MIT
  */
-class VoltDBStore implements StoreInterface
+class VoltDBStore implements CacheContract
 {
 
-    /** @var Repository */
+    /** @var ConfigContract */
     protected $config;
 
     /** @var string  */
@@ -24,7 +24,7 @@ class VoltDBStore implements StoreInterface
     /** @var string cache prefix key */
     protected $prefix;
 
-    /** @var \Illuminate\Encryption\Encrypter encrypter instance */
+    /** @var EncrypterContract encrypter instance */
     protected $encrypter;
 
     /** @var string default procedure */
@@ -44,13 +44,13 @@ class VoltDBStore implements StoreInterface
 
     /**
      * @param ClientConnection $connection
-     * @param Encrypter $encrypter
-     * @param Repository $config
+     * @param EncrypterContract $encrypter
+     * @param ConfigContract $config
      */
     public function __construct(
         ClientConnection $connection,
-        Encrypter $encrypter,
-        Repository $config
+        EncrypterContract $encrypter,
+        ConfigContract $config
     ) {
         $this->config = $config;
         $this->connection = $connection;
@@ -70,7 +70,7 @@ class VoltDBStore implements StoreInterface
         $prefixed = $this->prefix.$key;
         // stored procedure name
         $cacheFindProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.find', $this->cacheFindProcedure
+            'ytake-laravel-voltdb.default.cache.procedure.find', $this->cacheFindProcedure
         );
         // cache get
         $cache = $this->connection->procedure($cacheFindProcedure, [$prefixed]);
@@ -103,14 +103,16 @@ class VoltDBStore implements StoreInterface
         $value = $this->encrypter->encrypt($value);
         $expiration = $this->getTime() + ($minutes * 60);
 
-        $cacheAddProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.add', $this->cacheAddProcedure);
-
-        $cacheUpdateProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.update', $this->cacheUpdateProcedure);
         try {
+            $cacheAddProcedure = $this->config->get(
+                'ytake-laravel-voltdb.default.cache.procedure.add', $this->cacheAddProcedure
+            );
             $this->connection->procedure($cacheAddProcedure, compact('key', 'value', 'expiration'));
+
         } catch (\Exception $e) {
+            $cacheUpdateProcedure = $this->config->get(
+                'ytake-laravel-voltdb.default.cache.procedure.update', $this->cacheUpdateProcedure
+            );
             $this->connection->procedure($cacheUpdateProcedure, compact('value', 'expiration', 'key'));
         }
     }
@@ -174,7 +176,7 @@ class VoltDBStore implements StoreInterface
     public function forget($key)
     {
         $cacheForgetProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.forget', $this->cacheForgetProcedure);
+            'ytake-laravel-voltdb.default.cache.procedure.forget', $this->cacheForgetProcedure);
         $this->connection->procedure($cacheForgetProcedure, [$this->prefix.$key]);
     }
 
@@ -185,7 +187,7 @@ class VoltDBStore implements StoreInterface
     public function flush()
     {
         $cacheFlushProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.flushAll', $this->cacheFlushProcedure);
+            'ytake-laravel-voltdb.default.cache.procedure.flushAll', $this->cacheFlushProcedure);
         $this->connection->procedure($cacheFlushProcedure);
     }
 

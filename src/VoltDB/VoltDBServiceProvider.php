@@ -35,7 +35,6 @@ class VoltDBServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('ytake/laravel-voltdb');
         // required voltdb extension
         if (extension_loaded('voltdb')) {
             // register auth 'voltdb' driver
@@ -54,8 +53,10 @@ class VoltDBServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // voltdb api access(json interface) configure
-        $this->app['config']->package('ytake/laravel-voltdb', __DIR__ . '/../config');
+
+        $configPath = __DIR__ . '/../config/ytake-laravel-voltdb.php';
+        $this->mergeConfigFrom($configPath, 'ytake-laravel-voltdb');
+        $this->publishes([$configPath => config_path('ytake-laravel-voltdb.php')]);
 
         /**
          * required voltdb extension
@@ -66,9 +67,10 @@ class VoltDBServiceProvider extends ServiceProvider
             $this->app['db']->extend(
                 'voltdb',
                 function ($config) {
-                    //
                     return new ClientConnection(
-                        new \Ytake\VoltDB\Client(new VoltClient, new Parse), $config
+                        new \Ytake\VoltDB\Client(new VoltClient, new Parse),
+                        $config,
+                        $this->app['events']
                     );
                 }
             );
@@ -78,7 +80,9 @@ class VoltDBServiceProvider extends ServiceProvider
                 'voltdb',
                 function ($app) {
                     // for session
-                    $default = $app['config']->get('laravel-voltdb::default.session.database', $this->default);
+                    $default = $app['config']->get(
+                        'ytake-laravel-voltdb.default.session.database', $this->default
+                    );
                     return new VoltDBSessionHandler(
                         $app['db']->connection($default),
                         $app['config']
@@ -126,7 +130,7 @@ class VoltDBServiceProvider extends ServiceProvider
     {
         $this->app['auth']->extend('voltdb', function($app) {
                 //
-                $default = $app['config']->get('laravel-voltdb::default.auth.database', $this->default);
+                $default = $app['config']->get('ytake-laravel-voltdb.default.auth.database', $this->default);
                 return new \Illuminate\Auth\Guard(
                     new VoltDBUserProvider(
                         $app['db']->connection($default),
@@ -146,7 +150,7 @@ class VoltDBServiceProvider extends ServiceProvider
     {
         $this->app['cache']->extend('voltdb', function($app) {
                 // for cache
-                $default = $app['config']->get('laravel-voltdb::default.cache.database', $this->default);
+                $default = $app['config']->get('ytake-laravel-voltdb.default.cache.database', $this->default);
                 return new \Illuminate\Cache\Repository(
                     new VoltDBStore(
                         $app['db']->connection($default),
@@ -176,7 +180,7 @@ class VoltDBServiceProvider extends ServiceProvider
         );
         $this->app['command.voltdb.system.catalog'] = $this->app->share(function($app) {
                 // for system catalog database
-                $default = $app['config']->get('laravel-voltdb::default.system.database', $this->default);
+                $default = $app['config']->get('ytake-laravel-voltdb.default.system.database', $this->default);
                 return new \Ytake\LaravelVoltDB\Console\SystemCatalogCommand($app['db'], $default);
             }
         );

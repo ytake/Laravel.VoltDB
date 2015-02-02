@@ -1,11 +1,8 @@
 <?php
 
 use Mockery AS m;
-use Illuminate\Config\Repository;
-use Illuminate\Config\FileLoader;
-use Illuminate\Filesystem\Filesystem;
 
-class VoltDBStoreTest extends \PHPUnit_Framework_TestCase
+class VoltDBStoreTest extends TestCase
 {
     /** @var \Ytake\LaravelVoltDB\Cache\VoltDBStore  */
     protected $cache;
@@ -18,21 +15,17 @@ class VoltDBStoreTest extends \PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
-        $filePath = PATH;
-        $fileLoad = new FileLoader(new Filesystem(), $filePath);
-        $repo = new Repository($fileLoad, 'config');
-        $repo->package('laravel-voltdb', PATH, 'laravel-voltdb');
-        $this->encrypt = new \Illuminate\Encryption\Encrypter('testing');
+        $this->encrypt = new \Illuminate\Encryption\Encrypter('testingtestingtesting123');
 
         $this->clientMock = m::mock("Ytake\LaravelVoltDB\ClientConnection");
         $this->cache = new \Ytake\LaravelVoltDB\Cache\VoltDBStore(
             $this->clientMock,
             $this->encrypt,
-            $repo
+            $this->config
         );
     }
 
@@ -77,7 +70,7 @@ class VoltDBStoreTest extends \PHPUnit_Framework_TestCase
     {
         $this->clientMock->shouldReceive('procedure')->andReturnNull();
         $this->cache->put('key', 'testing', 120);
-        $this->assertNull($this->cache->forever('key', 'testing'));
+        $this->cache->forever('key', 'testing');
     }
 
     public function testCacheGet()

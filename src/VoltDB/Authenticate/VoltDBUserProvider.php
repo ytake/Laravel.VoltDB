@@ -1,11 +1,11 @@
 <?php
 namespace Ytake\LaravelVoltDB\Authenticate;
 
-use Illuminate\Config\Repository;
-use Illuminate\Auth\UserInterface;
-use Illuminate\Hashing\HasherInterface;
 use Ytake\LaravelVoltDB\ClientConnection;
-use Illuminate\Auth\UserProviderInterface;
+use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Contracts\Hashing\Hasher as HashContract;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticateUserContract;
 
 /**
  * Class VoltDBUserProvider
@@ -13,7 +13,7 @@ use Illuminate\Auth\UserProviderInterface;
  * @author yuuki.takezawa<yuuki.takezawa@comnect.jp.net>
  * @license http://opensource.org/licenses/MIT MIT
  */
-class VoltDBUserProvider implements UserProviderInterface
+class VoltDBUserProvider implements UserProvider
 {
 
     /** @var string default procedure */
@@ -28,7 +28,7 @@ class VoltDBUserProvider implements UserProviderInterface
     /** @var ClientConnection */
     protected $connection;
 
-    /** @var \Illuminate\Hashing\HasherInterface  The hasher implementation.  */
+    /** @var HashContract  The hasher implementation.  */
     protected $hasher;
 
     /** @var \Illuminate\Config\Repository  */
@@ -43,10 +43,10 @@ class VoltDBUserProvider implements UserProviderInterface
 
     /**
      * @param ClientConnection $connection
-     * @param HasherInterface $hasher
-     * @param Repository $config
+     * @param HashContract $hasher
+     * @param ConfigContract $config
      */
-    public function __construct(ClientConnection $connection, HasherInterface $hasher, Repository $config)
+    public function __construct(ClientConnection $connection, HashContract $hasher, ConfigContract $config)
     {
         $this->connection = $connection;
         $this->config = $config;
@@ -59,13 +59,13 @@ class VoltDBUserProvider implements UserProviderInterface
      * use stored procedure
      *
      * @param  mixed $identifier
-     * @return \Illuminate\Auth\UserInterface|null
+     * @return AuthenticateUserContract|null
      */
     public function retrieveById($identifier)
     {
         // stored procedure name
         $findUserProcedure = $this->config->get(
-            'laravel-voltdb::default.auth.procedure.findUser', $this->findUserProcedure);
+            'ytake-laravel-voltdb.default.auth.procedure.findUser', $this->findUserProcedure);
         $user = $this->connection->procedure($findUserProcedure, [$identifier]);
 		if (!is_null($user)) {
             return new VoltDBUser((array) $user, $this->config);
@@ -77,13 +77,13 @@ class VoltDBUserProvider implements UserProviderInterface
      *
      * @param  mixed $identifier
      * @param  string $token
-     * @return \Illuminate\Auth\UserInterface|null
+     * @return AuthenticateUserContract|null
      */
     public function retrieveByToken($identifier, $token)
     {
         //
         $rememberTokenProcedure = $this->config->get(
-            'laravel-voltdb::default.auth.procedure.remember_token', $this->rememberTokenProcedure);
+            'ytake-laravel-voltdb.default.auth.procedure.remember_token', $this->rememberTokenProcedure);
         $user = $this->connection->procedure($rememberTokenProcedure, [$identifier, $token]);
 
         if(!is_null($user)) {
@@ -94,15 +94,15 @@ class VoltDBUserProvider implements UserProviderInterface
     /**
      * Update the "remember me" token for the given user in storage.
      *
-     * @param  \Illuminate\Auth\UserInterface $user
+     * @param  AuthenticateUserContract $user
      * @param  string $token
      * @return void
      */
-    public function updateRememberToken(UserInterface $user, $token)
+    public function updateRememberToken(AuthenticateUserContract $user, $token)
     {
         //
         $updateTokenProcedure = $this->config->get(
-            'laravel-voltdb::default.auth.procedure.update_token', $this->updateTokenProcedure);
+            'ytake-laravel-voltdb.default.auth.procedure.update_token', $this->updateTokenProcedure);
         $this->connection->procedure($updateTokenProcedure, [$token, $user->getAuthIdentifier()]);
     }
 
@@ -110,7 +110,7 @@ class VoltDBUserProvider implements UserProviderInterface
      * Retrieve a user by the given credentials.
      *
      * @param  array $credentials
-     * @return \Illuminate\Auth\UserInterface|null
+     * @return AuthenticateUserContract|null
      */
     public function retrieveByCredentials(array $credentials)
     {
@@ -125,11 +125,11 @@ class VoltDBUserProvider implements UserProviderInterface
     /**
      * Validate a user against the given credentials.
      *
-     * @param  \Illuminate\Auth\UserInterface $user
+     * @param  AuthenticateUserContract $user
      * @param  array $credentials
      * @return bool
      */
-    public function validateCredentials(UserInterface $user, array $credentials)
+    public function validateCredentials(AuthenticateUserContract $user, array $credentials)
     {
         $plain = $credentials['password'];
         return $this->hasher->check($plain, $user->getAuthPassword());
