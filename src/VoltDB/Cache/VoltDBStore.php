@@ -70,7 +70,7 @@ class VoltDBStore implements StoreInterface
         $prefixed = $this->prefix.$key;
         // stored procedure name
         $cacheFindProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.find', $this->cacheFindProcedure
+            'ytake-laravel-voltdb.default.cache.procedure.find', $this->cacheFindProcedure
         );
         // cache get
         $cache = $this->connection->procedure($cacheFindProcedure, [$prefixed]);
@@ -104,10 +104,10 @@ class VoltDBStore implements StoreInterface
         $expiration = $this->getTime() + ($minutes * 60);
 
         $cacheAddProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.add', $this->cacheAddProcedure);
+            'ytake-laravel-voltdb.default.cache.procedure.add', $this->cacheAddProcedure);
 
         $cacheUpdateProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.update', $this->cacheUpdateProcedure);
+            'ytake-laravel-voltdb.default.cache.procedure.update', $this->cacheUpdateProcedure);
         try {
             $this->connection->procedure($cacheAddProcedure, compact('key', 'value', 'expiration'));
         } catch (\Exception $e) {
@@ -174,7 +174,7 @@ class VoltDBStore implements StoreInterface
     public function forget($key)
     {
         $cacheForgetProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.forget', $this->cacheForgetProcedure);
+            'ytake-laravel-voltdb.default.cache.procedure.forget', $this->cacheForgetProcedure);
         $this->connection->procedure($cacheForgetProcedure, [$this->prefix.$key]);
     }
 
@@ -185,7 +185,7 @@ class VoltDBStore implements StoreInterface
     public function flush()
     {
         $cacheFlushProcedure = $this->config->get(
-            'laravel-voltdb::default.cache.procedure.flushAll', $this->cacheFlushProcedure);
+            'ytake-laravel-voltdb.default.cache.procedure.flushAll', $this->cacheFlushProcedure);
         $this->connection->procedure($cacheFlushProcedure);
     }
 
