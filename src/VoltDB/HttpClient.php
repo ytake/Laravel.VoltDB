@@ -31,9 +31,9 @@ class HttpClient extends BaseClient
      */
     protected function setConfigure(Repository $repository)
     {
-        $this->host = $repository->get('laravel-voltdb::host', 'localhost');
-        $this->path = $repository->get('laravel-voltdb::path', '/api/1.0/');
-        $this->apiPort = $repository->get('laravel-voltdb::apiPort', 8080);
-        $this->ssl = $repository->get('laravel-voltdb::ssl', false);
+        $this->host = $repository->get('ytake-laravel-voltdb.host', 'localhost');
+        $this->path = $repository->get('ytake-laravel-voltdb.path', '/api/1.0/');
+        $this->apiPort = $repository->get('ytake-laravel-voltdb.apiPort', 8080);
+        $this->ssl = $repository->get('ytake-laravel-voltdb.ssl', false);
     }
 } 
