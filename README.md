@@ -11,7 +11,7 @@ VoltDB providers for Laravel
 [![Build Status](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/badges/build.png?b=master)](https://scrutinizer-ci.com/g/ytake/Laravel.VoltDB/build-status/master)
 
 ##for laravel5
-**for Laravel4  [Laravel.VoltDB](https://github.com/ytake/Laravel.VoltDB/tree/4.2)**
+**Laravel4  [Laravel.VoltDB](https://github.com/ytake/Laravel.VoltDB/tree/4.2)**
 
 #Install
 **required [ext-voltdb](https://github.com/VoltDB/voltdb-client-php), ext-curl**  
@@ -19,7 +19,7 @@ Add the package to your composer.json and run composer update.
 ```json
 "require": {
     "php": ">=5.4.0",
-    "ytake/laravel-voltdb": "1.*@dev"
+    "ytake/laravel-voltdb": "1.*"
 },
 ```
 
@@ -50,6 +50,18 @@ Add database connection
     'port' => 21212
 ],
 ```
+
+by default .env
+```
+DB_HOST=localhost
+DB_DATABASE=voltdb
+DB_USERNAME=username
+DB_PASSWORD=secret
+
+CACHE_DRIVER=voltdb
+SESSION_DRIVER=voltdb
+```
+
 publish
 ```bash
 $ php artisan vendor:publish 
