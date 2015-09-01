@@ -1,6 +1,15 @@
+filter:
+    paths:
+        - src/VoltDB/*
+    excluded_paths:
+        - tests/*
 tools:
-  external_code_coverage: true
+    php_code_sniffer:
+        config:
+            standard: "PSR2"
+    php_cs_fixer:
+        config: { level: psr2 }
 checks:
-  php:
-    code_rating: true
-    duplication: true
+    php:
+        code_rating: true
+        duplication: true
